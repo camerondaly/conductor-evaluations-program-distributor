@@ -1,0 +1,18 @@
+1. read files from google drive
+[] write basic logic to connect and open sheets
+[] processed and unprocessed folder
+- move to processed after collector is made succesfully
+[] read data from specific files. one file per distribution (collector)
+- conductor name
+- program name
+- recipient emails
+- concert (and thereby distribution) time
+[] update sheet to track programs already distributed?
+
+2. create distribution (collector) in Surveymonkey
+[] check if a collector with this conductor name and concert name already exists. skip sheet if so. does_collector_with_this_name_already_exist
+- Set display_settings to overwrite "survey_title" with the name of conductor and program from sheet
+- use recipients from sheet
+- set reminders 6 days after
+- close 7 days later
+

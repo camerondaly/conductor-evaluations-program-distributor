@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+
+# Google credentials
+google_credentials.json
+
+# secrets
+config_local.py
+
+# Local config
+config_local.py
