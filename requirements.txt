@@ -1,3 +1,5 @@
 gspread>=6.2.1
-google-auth>=2.20.0
 requests>=2.32.5
+google-auth>=2.22.0
+google-auth-oauthlib>=1.2.0
+google-api-python-client>=2.99.0

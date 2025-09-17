@@ -4,6 +4,7 @@ from surveymonkey_api_client import SurveyMonkeyApiClient
 from config import SURVEY_TEMPLATES, DEFAULT_SUBJECT, DEFAULT_BODY, UNPROCESSED_FOLDER_ID, PROCESSED_FOLDER_ID
 from config_local import SURVEYMONKEY_API_TOKEN
 
+
 class CollectorScheduler:
     def __init__(self):
         self.surveymonkey_client = SurveyMonkeyApiClient(SURVEYMONKEY_API_TOKEN)

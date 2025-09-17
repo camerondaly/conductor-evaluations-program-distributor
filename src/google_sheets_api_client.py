@@ -6,6 +6,7 @@ from googleapiclient.discovery import build
 
 class GoogleSheetsApiClient:
     def __init__(self):
+        self.creds_file = "google_credentials.json"
         self.SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
         self.gsheet_client = self._authorize_gsheets()
         self.drive_service = self._authorize_drive()
@@ -91,7 +92,7 @@ class GoogleSheetsApiClient:
 
 # Sheet layout
 """
-| Row | Event Title / Conductor | Conductor Name | Event Date (YYYY-MM-DD HH\:MM) | First Name | Last Name | Email                                                     | Instrument |
+| Row | Event Title / Conductor | Conductor Name | Event Date (YYYY-MM-DD HH:MM)  | First Name | Last Name | Email                                                     | Instrument |
 | --- | ----------------------- | -------------- | ------------------------------ | ---------- | --------- | --------------------------------------------------------- | ---------- |
 | 1   | SUB 9.                  | Jane Doe       | 2025-09-16 20:00               |            |           |                                                           |            |
 | 2   |                         |                |                                | Jacqueline | Audas     | [jaudas@icloud.com](mailto:jaudas@icloud.com)             | Violin 1   |
