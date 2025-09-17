@@ -1,5 +1,5 @@
-UNPROCESSED_FOLDER_ID = "FOLDER_ID_UNPROCESSED"
-PROCESSED_FOLDER_ID = "FOLDER_ID_PROCESSED"
+UNPROCESSED_FOLDER_ID = "1k99Mo8-3zRUR0jpYSAFsGxQ0t6tMVvfE"
+PROCESSED_FOLDER_ID = "1CPBnbNqFqCWN7WJc57jpOwwxVwW7258d"
 
 # Google Sheets
 SHEET_IDS = {
@@ -8,15 +8,16 @@ SHEET_IDS = {
     "Opera": "TODO"
 }
 
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets.readonly",  # read Sheets
+    "https://www.googleapis.com/auth/drive"                  # move files in Drive
+]
+
 # SurveyMonkey survey templates (can also store survey IDs directly)
 SURVEY_TEMPLATES = {
-    "SSO": "TEST SSO Conductor Evaluation",
+    "SSO": "aEf0CttAzvB3RiEDlkq8_2FgrHh8B1NNbUnKkdaSxn_2FRM_3D",
     "Seattle Opera": "TODO",
     "Music Director": "TODO",
     "Assistant Conductor": "TODO",
     "Misc.": "TODO"
 }
-
-# Optional default email subject/body
-DEFAULT_SUBJECT = "Conductor Evaluation for {title}"
-DEFAULT_BODY = "Hello! Please complete the survey for {title}."

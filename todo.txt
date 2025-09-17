@@ -1,19 +1,24 @@
 1. read files from google drive
-[] write basic logic to connect and open sheets
-[] processed and unprocessed folder
-- move to processed after collector is made succesfully
-[] read data from specific files. one file per distribution (collector)
+[x] write basic logic to connect and open sheets
+[x] processed and unprocessed folder
+[x] read data from specific files. one file per distribution (collector)
 - conductor name
 - program name
 - recipient emails
 - concert (and thereby distribution) time
-[] update sheet to track programs already distributed?
+[] move to processed folder when collector is made or synced
 
-2. create distribution (collector) in Surveymonkey
-[] check if a collector with this conductor name and concert name already exists. 
+2. create new survey from tempalte copy. and create distribution (collector) in Surveymonkey
+[] check if a survey and/or collector with this conductor name and concert name already exists. 
 - if it already exists, update the recipients, but don't create a new collector.
-- Set display_settings to overwrite "survey_title" with the name of conductor and program from sheet
 - use recipients from sheet
 - set reminders 6 days after
 - close 7 days later
+
+[x] KEY TODO: MAKE THE SURVEY IDETNIFY THE CONDUCTOR SOMEHOW. PIPED TEXT? COLLECTOR NAME? CUSTOM VARIABLE?
+- just stick to new survey per conductor
+
+[] MAKE SURE OPERA EVENT NAMES HAVE "OPERA" IN THEM
+
+[] TODO: remove test folder ID and replate with automation folder id
 

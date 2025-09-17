@@ -1,13 +1,14 @@
-# sheets_reader.py
+import config
 import gspread
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 
 
+
 class GoogleSheetsApiClient:
     def __init__(self):
         self.creds_file = "google_credentials.json"
-        self.SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+        self.SCOPES = config.SCOPES
         self.gsheet_client = self._authorize_gsheets()
         self.drive_service = self._authorize_drive()
     
@@ -24,27 +25,30 @@ class GoogleSheetsApiClient:
         Reads the first row for event metadata (title, date, conductor),
         and subsequent rows for recipient emails.
         """
-        sh = self.client.open_by_key(sheet_id)
+        sh = self.gsheet_client.open_by_key(sheet_id)
         ws = sh.worksheet(worksheet_name)
         rows = ws.get_all_values()
 
-        # first row has the event data
-        event_title = rows[0][0].strip()  # e.g., SUB 9
-        conductor_name = rows[0][1].strip()  # e.g., "Ludovic Morlot"
-        last_concert_timestamp = rows[0][2].strip()  # e.g., "2025-09-16 20:00"
+        # TESTING
+        print(rows)
 
-        # Recipients start from row 2
+        # second row has the event data (first row is headers)
+        event_title = rows[1][0].strip()  # e.g., SUB 9
+        conductor_name = rows[1][1].strip()  # e.g., "Ludovic Morlot"
+        last_concert_timestamp = rows[1][2].strip()  # e.g., "2025-09-16 20:00"
+
+        # Recipients start from third row
         emails = []
-        for r in rows[1:]:
-            if len(r) < 4:
-                continue
-            email = r[2].strip()
+        for r in rows[2:]:
+            # if len(r) < 4:
+            #     continue
+            email = r[5].strip()
             if email and "@" in email:
                 emails.append(email)
 
         # Add the librarians
-        emails.append("Olivia.sangiovese@gmail.com")
-        emails.append("carledwardwilder@gmail.com")
+        # emails.append("Olivia.sangiovese@gmail.com")
+        # emails.append("carledwardwilder@gmail.com")
 
         return event_title, conductor_name, last_concert_timestamp, emails
     
