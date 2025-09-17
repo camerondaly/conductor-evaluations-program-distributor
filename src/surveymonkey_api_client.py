@@ -45,6 +45,29 @@ class SurveyMonkeyApiClient:
     def get_collector(self, survey_id, collector_name):
         # TODO: return None if there is no such collector else return it?
         return None
+    
+    def get_collector_by_name(self, survey_id, collector_name) -> tuple[str, str]:
+        """
+        Fetch collector ID (and URL) for a given survey by collector name using SM API 'name' filter.
+        Returns (collector_id, collector_url) or (None, None) if not found.
+        """
+        url = f"https://api.surveymonkey.com/v3/surveys/{survey_id}/collectors"
+        params = {"name": collector_name}
+        
+        response = requests.get(url, headers=self.headers, params=params)
+        if response.status_code != 200:
+            print(f"Warning: failed to fetch collectors (status {response.status_code})")
+            return None, None
+
+        data = response.json()
+        collectors = data.get("data", [])
+        if not collectors:
+            return None, None
+
+        # Take first match
+        col = collectors[0]
+        return col["id"], col.get("href")  # href is collector URL
+
 
     # ------------------------
     # Recipients
@@ -52,12 +75,52 @@ class SurveyMonkeyApiClient:
     def add_recipients(self, collector_id, emails):
         recipients = [{"email": e} for e in emails]
         resp = requests.post(
-            f"{self.base_url}/collectors/{collector_id}/recipients/bulk",
+            f"{self.base_url}/collectors/{collector_id}/recipients",
             headers=self.headers,
             json={"recipients": recipients}
         )
         resp.raise_for_status()
         return resp.json()
+
+    def sync_recipients(self, collector_id, emails):
+        """
+        Sync collector recipients to match the current sheet.
+        Only remove recipients who are no longer in the sheet.
+        Adding new recipients can be done in bulk; duplicates are ignored by SM.
+        """
+        # Fetch current recipients
+        existing = self.get_recipients(collector_id)
+        existing_emails = {r["email"]: r["id"] for r in existing}
+
+        # Identify emails to remove
+        to_remove = set(existing_emails.keys()) - set(emails)
+
+        # Remove recipients no longer in sheet
+        for email in to_remove:
+            rid = existing_emails[email]
+            url = f"https://api.surveymonkey.com/v3/collectors/{collector_id}/recipients/{rid}"
+            response = requests.delete(url, headers=self.headers)
+            if response.status_code not in (200, 204):
+                print(f"Warning: failed to remove recipient {email} (status {response.status_code})")
+
+    def get_recipients(self, collector_id):
+        """
+        Fetch existing recipients for a collector.
+        Returns a list of dicts with at least 'id' and 'email'.
+        """
+        recipients = []
+        url = f"https://api.surveymonkey.com/v3/collectors/{collector_id}/recipients"
+        page = 1
+        while url:
+            response = requests.get(url, headers=self.headers)
+            if response.status_code != 200:
+                print(f"Warning: failed to fetch recipients (status {response.status_code})")
+                break
+            data = response.json()
+            recipients.extend(data.get("data", []))
+            url = data.get("links", {}).get("next")
+            page += 1
+        return recipients
 
     # ------------------------
     # Send message

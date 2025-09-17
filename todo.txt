@@ -10,7 +10,8 @@
 [] update sheet to track programs already distributed?
 
 2. create distribution (collector) in Surveymonkey
-[] check if a collector with this conductor name and concert name already exists. skip sheet if so. does_collector_with_this_name_already_exist
+[] check if a collector with this conductor name and concert name already exists. 
+- if it already exists, update the recipients, but don't create a new collector.
 - Set display_settings to overwrite "survey_title" with the name of conductor and program from sheet
 - use recipients from sheet
 - set reminders 6 days after
