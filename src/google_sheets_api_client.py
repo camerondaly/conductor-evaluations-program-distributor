@@ -29,7 +29,7 @@ class GoogleSheetsApiClient:
         ws = sh.worksheet(worksheet_name)
         rows = ws.get_all_values()
 
-        # TESTING
+        # TESTING TODO remove
         print(rows)
 
         # second row has the event data (first row is headers)

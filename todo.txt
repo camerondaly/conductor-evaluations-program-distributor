@@ -6,19 +6,28 @@
 - program name
 - recipient emails
 - concert (and thereby distribution) time
-[] move to processed folder when collector is made or synced
+[x] move to processed folder when collector is made or synced
 
 2. create new survey from tempalte copy. and create distribution (collector) in Surveymonkey
-[] check if a survey and/or collector with this conductor name and concert name already exists. 
+[x] check if survey exists
+[x] create survey from template
+[x] check if collector with this conductor name and concert name already exists. 
+[x] avoid duplicating collector w same name
 - if it already exists, update the recipients, but don't create a new collector.
 - use recipients from sheet
 - set reminders 6 days after
 - close 7 days later
 
+[x]collector
+- if survey exists, skip creation
+- if collector exists, skip collector creation
+- if message on collector exists, skip creation
+
+
+misc issues
 [x] KEY TODO: MAKE THE SURVEY IDETNIFY THE CONDUCTOR SOMEHOW. PIPED TEXT? COLLECTOR NAME? CUSTOM VARIABLE?
 - just stick to new survey per conductor
-
-[] MAKE SURE OPERA EVENT NAMES HAVE "OPERA" IN THEM
-
+[] MAKE SURE OPERA EVENT NAMES HAVE "OPERA" IN THEM WHEN PM ADDS THEM
 [] TODO: remove test folder ID and replate with automation folder id
+[] TODO: ensure the reminder automatically inherits recipient list from the invite list and only those who did not respond. 
 
