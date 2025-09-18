@@ -15,35 +15,35 @@ class CollectorScheduler:
         # Get all unprocessed sheets
         sheets = self.google_sheets_client.list_sheets_in_folder(UNPROCESSED_FOLDER_ID)
         for sheet_id, sheet_name in sheets:
-            # Pull data from sheet
+            # Pull data from sheet and validate it
             event_title, conductor_name, event_date, recipient_emails_on_sheet = self.google_sheets_client.read_roster_sheet(sheet_id)
-            if not recipient_emails_on_sheet:
-                print(f"No recipients found for {event_title}, skipping sheet.")
+            if not self.is_google_sheet_valid(event_title, conductor_name, event_date, recipient_emails_on_sheet):
+                print("Error(s) found with Google Sheet formatting. Skipping this Sheet.")
                 continue
 
             # create Collector name and page title and Survey Name
             collector_name = f"TEST Email Invitation for {conductor_name} ({event_title})"  # e.g., Ludovic Morlot (SUB 9)
             survey_name = f"TEST Conductor Evaluation for {conductor_name} ({event_title})"
 
-            # Get appropariate template Survey ID
+            # Get appropriate template Survey ID
             template_survey_id = self.get_required_template_survey_id(event_title)
             print("template_survey_id", template_survey_id)
 
 
-            print("event_title, conductor_name, event_date, recipient_emails_on_sheet:")
-            print(event_title, conductor_name, event_date, recipient_emails_on_sheet)
-            print("^ thats from g drive")
+            print("event_title, conductor_name, event_date, number of recipient emails:")
+            print(event_title, conductor_name, event_date, f"{len(recipient_emails_on_sheet)} valid emails on sheet")
+            print("^ thats from google drive ------------- \n")
 
 
             # Create survey w this name if does not exist. Proceed to collector creation/update if survey exists.
             existing_survey_id, _ = self.surveymonkey_client.get_survey_id_by_name(survey_name)
 
             if not existing_survey_id:
-                print("Creating new survey for program.")
+                print("Creating new survey for this program.")
                 survey_id = self.surveymonkey_client.clone_survey(template_survey_id, survey_name)
                 print("New survey's id: ", survey_id)
             else:
-                print(f"Survey '{existing_survey_id}' already exists for program.")
+                print(f"Survey '{existing_survey_id}' already exists for this program.")
                 survey_id = existing_survey_id
 
             invite_send_timestamp = self.calculate_distribution_time_for_event_date(event_date)
@@ -56,7 +56,7 @@ class CollectorScheduler:
             if not does_collector_exist or not collector_id:
                 print(f"Creating new collector on survey. Collector name: '{collector_name}'")
                 collector_id, _ = self.surveymonkey_client.create_collector(
-                    survey_id, collector_name
+                    survey_id, collector_name, close_timestamp
                 )
 
             invite_message_id, reminder_message_id = "", ""
@@ -80,7 +80,7 @@ class CollectorScheduler:
                 invite_message_id = self.surveymonkey_client.create_invite_message(collector_id, survey_name)
             # if reminder message does not exist, create reminder.
             if not reminder_message_id:
-                print("Invite message exists, but no reminder message. Creating reminder.")
+                print("No reminder message exists yet. Creating reminder.")
                 reminder_message_id = self.surveymonkey_client.create_reminder_message(
                     collector_id,
                     subject=f"Reminder: + {survey_name}",
@@ -114,8 +114,30 @@ class CollectorScheduler:
             print("Sheet processed.")
         print("No sheets left to process.")
 
-    def get_id_for_survey_with_this_name_if_it_exists(self, survey_name):
-        return self.surveymonkey_client.get_survey_id_by_name(survey_name)
+    def is_google_sheet_valid(self, event_title, conductor_name, event_date, recipient_emails_on_sheet):
+        errors = []
+        if not recipient_emails_on_sheet:
+            errors.append("No recipients found on sheet.")
+        if not event_title:
+            errors.append("Sheet missing event title (e.g. SUB 1).")
+        if not conductor_name:
+            errors.append("Sheet missing conductor name (e.g. Ludovic Morlot).")
+        event_dt = None
+        try:
+            # Parse as Pacific local time
+            pacific = ZoneInfo("America/Los_Angeles")
+            event_dt = datetime.strptime(event_date, "%Y-%m-%d %H:%M").replace(tzinfo=pacific)
+            # Compare against current UTC time
+            now = datetime.now(timezone.utc)
+            if event_dt.astimezone(timezone.utc) <= now:
+                errors.append(f"Event date {event_dt} must be in the future.")
+        except ValueError:
+            errors.append(f"Invalid event date format: '{event_date}'. Expected 'YYYY-MM-DD HH:MM'.")
+        if errors:
+            for e in errors:
+                print(e)
+            return False
+        return True
 
     def does_collector_with_this_name_already_exist(self, survey_id: str, collector_name: str):
         collector_id, collector_url = self.surveymonkey_client.get_collector_by_name(survey_id, collector_name)

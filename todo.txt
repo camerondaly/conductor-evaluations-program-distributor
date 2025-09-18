@@ -31,3 +31,7 @@ misc issues
 [] TODO: remove test folder ID and replate with automation folder id
 [] TODO: ensure the reminder automatically inherits recipient list from the invite list and only those who did not respond. 
 
+TEST CASES
+[x] removing recipient from collector also removes from invite message?
+[x] invalid date won't send immediately? instead should throw and print error
+[x] invalid emails are printed w a warning and skipped

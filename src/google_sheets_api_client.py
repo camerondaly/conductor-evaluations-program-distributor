@@ -2,7 +2,11 @@ import config
 import gspread
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+import re
 
+EMAIL_REGEX = re.compile(
+    r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+)
 
 
 class GoogleSheetsApiClient:
@@ -29,9 +33,6 @@ class GoogleSheetsApiClient:
         ws = sh.worksheet(worksheet_name)
         rows = ws.get_all_values()
 
-        # TESTING TODO remove
-        print(rows)
-
         # second row has the event data (first row is headers)
         event_title = rows[1][0].strip()  # e.g., SUB 9
         conductor_name = rows[1][1].strip()  # e.g., "Ludovic Morlot"
@@ -40,11 +41,11 @@ class GoogleSheetsApiClient:
         # Recipients start from third row
         emails = []
         for r in rows[2:]:
-            # if len(r) < 4:
-            #     continue
-            email = r[5].strip()
-            if email and "@" in email:
-                emails.append(email)
+            raw_email = r[5].strip()
+            if raw_email and self.is_valid_email(raw_email):
+                emails.append(raw_email)
+            elif raw_email:
+                print(f"Skipping invalid email: {raw_email}")
 
         # Add the librarians
         # emails.append("Olivia.sangiovese@gmail.com")
@@ -52,6 +53,9 @@ class GoogleSheetsApiClient:
 
         return event_title, conductor_name, last_concert_timestamp, emails
     
+    def is_valid_email(self, email: str) -> bool:
+        return EMAIL_REGEX.match(email.strip()) is not None
+        
     def move_sheet_to_folder(self, sheet_id, folder_id):
         """
         Moves a Google Sheet to a different Drive folder.

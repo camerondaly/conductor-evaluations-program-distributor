@@ -44,8 +44,8 @@ class SurveyMonkeyApiClient:
     # ------------------------
     # Collector
     # ------------------------
-    def create_collector(self, survey_id, collector_name):
-        payload = {"type": "email", "name": collector_name}
+    def create_collector(self, survey_id, collector_name, close_dt):
+        payload = {"type": "email", "name": collector_name, "close_date": close_dt}
         print("create collextor payload: ")
         print(payload)
         resp = requests.post(f"{self.base_url}/surveys/{survey_id}/collectors", headers=self.headers, json=payload)
@@ -93,7 +93,7 @@ class SurveyMonkeyApiClient:
         for email in emails:
             formatted_recipients["contacts"].append({"email": email})
         if formatted_recipients["contacts"]:
-            print("Logging first formattted recipient to add: ", formatted_recipients["contacts"][0])
+            print("Logging first formatted recipient to add: ", formatted_recipients["contacts"][0])
         resp = requests.post(
             f"{self.base_url}/collectors/{collector_id}/messages/{message_id}/recipients/bulk",
             headers=self.headers,
@@ -128,7 +128,7 @@ class SurveyMonkeyApiClient:
             response = requests.delete(url, headers=self.headers)
             if response.status_code not in (200, 204):
                 print(f"Warning: failed to remove recipient {email} (status {response.status_code})")
-        print("Recipient removed from file have been removed from the collector.")
+            print(f"Recipient {email} removed from file has been removed from the collector.")
 
     def get_recipients(self, collector_id):
         """
@@ -155,19 +155,21 @@ class SurveyMonkeyApiClient:
         send_payload = {}
         dt_utc = self._parse_iso_z(schedule_dt).astimezone(timezone.utc)
         send_payload["scheduled_date"] = self._to_api_iso_z(dt_utc)
-
         send_resp = requests.post(
             f"{self.base_url}/collectors/{collector_id}/messages/{message_id}/send",
             headers=self.headers,
-            json=send_payload
+            json=send_payload,
         )
         send_resp.raise_for_status()
         return send_resp.json()
     
     def create_invite_message(self, collector_id, survey_name):
         # Create message and return ID
-        subject = survey_name
-        payload = {"type": "invite", "subject": subject, "embed_first_question": True}
+        payload = {
+            "type": "invite",
+            "subject": survey_name,
+            "embed_first_question": True
+        }
         resp = requests.post(f"{self.base_url}/collectors/{collector_id}/messages", headers=self.headers, json=payload)
         resp.raise_for_status()
         message_id = resp.json()["id"]
