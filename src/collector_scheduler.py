@@ -35,9 +35,10 @@ class CollectorScheduler:
             print("^ thats from google drive ------------- \n")
 
 
-            # Create survey w this name if does not exist. Proceed to collector creation/update if survey exists.
+            # Get Survey ID for this program, if it exists already. 
             existing_survey_id, _ = self.surveymonkey_client.get_survey_id_by_name(survey_name)
 
+            # Create survey if needed. 
             if not existing_survey_id:
                 print("Creating new survey for this program.")
                 survey_id = self.surveymonkey_client.clone_survey(template_survey_id, survey_name)
@@ -49,10 +50,10 @@ class CollectorScheduler:
             invite_send_timestamp = self.calculate_distribution_time_for_event_date(event_date)
             close_timestamp = self.calculate_closing_time_for_collector(event_date)
 
-            # Handle case where collector exists and we need to sync the recipient list. Else, create it.
+            # Get the collector for this survey, if it exists.
             does_collector_exist, collector_id = self.does_collector_with_this_name_already_exist(survey_id, collector_name)
 
-            # if no collector exists, create it
+            # If no collector exists, create it and set the closing time based on the Event Date.
             if not does_collector_exist or not collector_id:
                 print(f"Creating new collector on survey. Collector name: '{collector_name}'")
                 collector_id, _ = self.surveymonkey_client.create_collector(
@@ -67,7 +68,7 @@ class CollectorScheduler:
 
             # if there are 1 or 2 messages, use the existing message id(s)
             if len(messages_on_collector) > 0 and len(messages_on_collector) < 3:
-                print("Two messages already exist.")
+                print(f"{len(messages_on_collector)} message(s) already exist.")
                 for message in messages_on_collector:
                     if message["type"] == "invite":
                         invite_message_id = message["id"]
@@ -86,33 +87,30 @@ class CollectorScheduler:
                     subject=f"Reminder: + {survey_name}",
                 )
 
-            # throw if we dont have one invite and one reminder at this point.
+            # throw if we dont have just one invite and one reminder at this point.
             if not invite_message_id or not reminder_message_id or len(messages_on_collector) > 2:
                 raise Exception("Invalid message count for survey. Need one invite and one reminder.")
 
             print("Invite message ID: ", invite_message_id)
             print("Reminder message ID: ", reminder_message_id)
 
-            # TODO: ensure the reminder inherits recipient list from the invite list and only those who did not respond. 
             # update/sync recipients on the INVITE message
-            print("Adding/removing recipients...")
+            print("Syncing Surveymonkey recipients with Sheet...")
             self.surveymonkey_client.delete_recipients_in_collector_but_not_in_file(collector_id, recipient_emails_on_sheet)
             self.surveymonkey_client.add_recipients(collector_id, invite_message_id, recipient_emails_on_sheet)
             print("Recipients on collector synced with file.")
 
-
             # schedule the invite message
             self.surveymonkey_client.schedule_message(collector_id, invite_message_id, invite_send_timestamp)
-            # schedule the reminder
+            # schedule the reminder message
             self.surveymonkey_client.schedule_reminder_message_send(collector_id, reminder_message_id, invite_send_timestamp)
 
-            print(f"Invite, reminder, and recipients synced for survey, '{survey_name}'. Moving file to processed folder.")
+            print(f"Invite, reminder, and recipients synced for survey, '{survey_name}'. Sheet processed.")
 
             # Move sheet to processed folder
             self.google_sheets_client.move_sheet_to_folder(sheet_id, PROCESSED_FOLDER_ID)
-            print(f"{sheet_name} moved to processed.")
-            print("Sheet processed.")
-        print("No sheets left to process.")
+            print(f"{sheet_name} moved to PROCESSED folder.")
+        print("No sheets left to process. (: ")
 
     def is_google_sheet_valid(self, event_title, conductor_name, event_date, recipient_emails_on_sheet):
         errors = []
