@@ -22,8 +22,8 @@ class CollectorScheduler:
                 continue
 
             # create Collector name and page title and Survey Name
-            collector_name = f"TEST Email Invitation for {conductor_name} ({event_title})"  # e.g., Ludovic Morlot (SUB 9)
-            survey_name = f"TEST Conductor Evaluation for {conductor_name} ({event_title})"
+            collector_name = f"Email Invitation for {conductor_name} ({event_title})"  # e.g., Ludovic Morlot (SUB 9)
+            survey_name = f"Conductor Evaluation for {conductor_name} ({event_title})"
 
             # Get appropriate template Survey ID
             template_survey_id = self.get_required_template_survey_id(event_title)
@@ -92,7 +92,7 @@ class CollectorScheduler:
 
             print("Invite message ID: ", invite_message_id)
             print("Reminder message ID: ", reminder_message_id)
-                
+
             # TODO: ensure the reminder inherits recipient list from the invite list and only those who did not respond. 
             # update/sync recipients on the INVITE message
             print("Adding/removing recipients...")
@@ -105,7 +105,7 @@ class CollectorScheduler:
             self.surveymonkey_client.schedule_message(collector_id, invite_message_id, invite_send_timestamp)
             # schedule the reminder
             self.surveymonkey_client.schedule_reminder_message_send(collector_id, reminder_message_id, invite_send_timestamp)
-            
+
             print(f"Invite, reminder, and recipients synced for survey, '{survey_name}'. Moving file to processed folder.")
 
             # Move sheet to processed folder
@@ -173,7 +173,7 @@ class CollectorScheduler:
         distribution_dt = (event_dt + timedelta(minutes=100)).astimezone(timezone.utc)
         closing_dt = distribution_dt + timedelta(days=8)
         return closing_dt.isoformat().replace("+00:00", "Z")
-        
+
     def get_required_template_survey_id(self, event_title: str):
         # TODO polish this?
         print(f"event title is: {event_title}")

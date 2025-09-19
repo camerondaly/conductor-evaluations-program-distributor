@@ -15,7 +15,7 @@ class GoogleSheetsApiClient:
         self.SCOPES = config.SCOPES
         self.gsheet_client = self._authorize_gsheets()
         self.drive_service = self._authorize_drive()
-    
+
     def _authorize_gsheets(self):
         creds = Credentials.from_service_account_file(self.creds_file, scopes=self.SCOPES)
         return gspread.authorize(creds)

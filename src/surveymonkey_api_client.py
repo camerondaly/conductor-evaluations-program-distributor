@@ -35,7 +35,6 @@ class SurveyMonkeyApiClient:
         Returns the new survey_id.
         """
         url = f"{self.base_url}/surveys"
-        # TODO: remove test folder ID and replate with automation folder id
         payload = {"title": new_title, "folder_id": "1373789", "from_survey_id": survey_id}
         resp = requests.post(url, headers=self.headers, json=payload)
         resp.raise_for_status()

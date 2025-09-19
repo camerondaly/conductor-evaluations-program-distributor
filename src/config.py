@@ -9,7 +9,7 @@ SCOPES = [
 # SurveyMonkey survey templates (can also store survey IDs directly)
 SURVEY_TEMPLATES = {
     "SSO": "524870670",
-    "Seattle Opera": "TODO",
+    "Seattle Opera": "419955940",
     "Music Director": "TODO",
     "Assistant Conductor": "TODO",
     "Misc.": "TODO"

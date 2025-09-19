@@ -27,11 +27,12 @@
 misc issues
 [x] KEY TODO: MAKE THE SURVEY IDETNIFY THE CONDUCTOR SOMEHOW. PIPED TEXT? COLLECTOR NAME? CUSTOM VARIABLE?
 - just stick to new survey per conductor
-[] MAKE SURE OPERA EVENT NAMES HAVE "OPERA" IN THEM WHEN PM ADDS THEM
-[] TODO: remove test folder ID and replate with automation folder id
-[] TODO: ensure the reminder automatically inherits recipient list from the invite list and only those who did not respond. 
+x[] MAKE SURE OPERA EVENT NAMES HAVE "OPERA" IN THEM WHEN PM ADDS THEM
+[x] TODO: remove test folder ID and replate with automation folder id
+[x] TODO: ensure the reminder automatically inherits recipient list from the invite list and only those who did not respond. 
 
 TEST CASES
 [x] removing recipient from collector also removes from invite message?
 [x] invalid date won't send immediately? instead should throw and print error
 [x] invalid emails are printed w a warning and skipped
+[] Opera template is used when Event Title contains "opera" case insensitive
