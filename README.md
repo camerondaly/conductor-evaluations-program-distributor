@@ -1,0 +1,2 @@
+This automation is for the Seattle Symphony. It reads rosters from Google Sheets and creates/schedules corresponding surveys with Surveymonkey. 
+For more info: https://docs.google.com/document/d/1AyKvhRXZf83vDrminoWEmX_fXGu8_Nw3pgFQ4bP-1ZU/edit?usp=sharing
