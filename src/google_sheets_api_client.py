@@ -48,8 +48,8 @@ class GoogleSheetsApiClient:
                 print(f"Skipping invalid email: {raw_email}")
 
         # Add the librarians
-        # emails.append("Olivia.sangiovese@gmail.com")
-        # emails.append("carledwardwilder@gmail.com")
+        emails.append("Olivia.sangiovese@gmail.com")
+        emails.append("carledwardwilder@gmail.com")
 
         return event_title, conductor_name, last_concert_timestamp, emails
     
