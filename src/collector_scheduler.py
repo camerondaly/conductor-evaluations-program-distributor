@@ -84,7 +84,7 @@ class CollectorScheduler:
                 print("No reminder message exists yet. Creating reminder.")
                 reminder_message_id = self.surveymonkey_client.create_reminder_message(
                     collector_id,
-                    subject=f"Reminder: + {survey_name}",
+                    subject=f"Reminder: {survey_name}",
                 )
 
             # throw if we dont have just one invite and one reminder at this point.
