@@ -24,7 +24,7 @@ class GoogleSheetsApiClient:
         creds = Credentials.from_service_account_file(self.creds_file, scopes=self.SCOPES)
         return build('drive', 'v3', credentials=creds)
 
-    def read_roster_sheet(self, sheet_id, worksheet_name="Sheet1"):
+    def read_roster_sheet(self, sheet_id, worksheet_name="MusicianInfo"):
         """
         Reads the first row for event metadata (title, date, conductor),
         and subsequent rows for recipient emails.

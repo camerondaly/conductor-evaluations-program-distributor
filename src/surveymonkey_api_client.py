@@ -44,7 +44,7 @@ class SurveyMonkeyApiClient:
     # Collector
     # ------------------------
     def create_collector(self, survey_id, collector_name, close_dt):
-        payload = {"type": "email", "name": collector_name, "close_date": close_dt}
+        payload = {"type": "email", "name": collector_name, "close_date": close_dt, "anonymous_type": "fully_anonymous"}
         print("create collextor payload: ")
         print(payload)
         resp = requests.post(f"{self.base_url}/surveys/{survey_id}/collectors", headers=self.headers, json=payload)
